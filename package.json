@@ -1,0 +1,15 @@
+{
+  "name": "es-graph",
+  "version": "0.0.0",
+  "description": "Graph structure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "es6",
+    "graph"
+  ],
+  "author": "",
+  "license": "MIT"
+}
