@@ -28,47 +28,41 @@ class Graph {
         }
     }
 
-    depthSearch(v, fn) {
+    depthSearch(index, fn) {
         this.clearVisited();
-        this._depthSearch(v, fn);
-    }
-
-    _depthSearch(v, fn) {
-        // TODO: v out of range
-        this.visited[v] = true;
-        fn && fn(v);
-        this.adjList[v].forEach((w) => {
-            if (!this.visited[w]) {
-                this._depthSearch(w, fn);
+        if (fn) {
+            for (let v of this._depthSearch(index)) {
+                fn(v);
             }
-        });
-    }
-
-    breadthSearch(v, fn) {
-        this.clearVisited();
-        this._breadthSearch(v, fn);
-    }
-
-    _breadthSearch(v, fn) {
-        var que = [v];
-
-        while(que.length > 0) {
-            var v = que.shift();
-            fn && fn(v);
-            this.visited[v] = true;
-            this.adjList[v].forEach((w) => {
-                if (!this.visited[w]) {
-                    que.push(w);
-                }
-            });
+        } else {
+            return this._depthSearch(index);
         }
     }
 
-    * [Symbol.iterator]() {
-        yield* this.bar(0);
+    * _depthSearch(v) {
+        // TODO: v out of range
+        yield v;
+        this.visited[v] = true;
+        for (var i = 0; i < this.adjList[v].length; i++) {
+            var w = this.adjList[v][i];
+            if (!this.visited[w]) {
+                yield* this._depthSearch(w);
+            }
+        }
     }
 
-    * bar(v, fn) {
+    breadthSearch(index, fn) {
+        if (fn) {
+            for (let v of this._breadthSearch(index)) {
+                fn(v);
+            }
+        } else {
+            return this._breadthSearch(index);
+        }
+    }
+
+    * _breadthSearch(v) {
+        this.clearVisited();
         var que = [v];
 
         while(que.length > 0) {
@@ -83,26 +77,8 @@ class Graph {
         }
     }
 
-    gayBar(fn) {
-        for (let v of this.bar(0, true)) {
-            var genObj = fn();
-            genObj.next();
-            genObj.next(v);
-        }
-    }
-
-    foo(v) {
-        return {
-            [Symbol.iterator]: {
-                items: ['p', 'o', 'n', 'y', 'f', 'o', 'o'],
-                next: function next () {
-                    return {
-                     done: this.items.length === 0,
-                     value: this.items.shift()
-                   }
-                }
-            }
-        }
+    * [Symbol.iterator]() {
+        yield* this._breadthSearch(0);
     }
 
     toString() {
