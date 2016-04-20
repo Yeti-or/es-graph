@@ -1,97 +1,88 @@
 'use strict';
 
-function Vertex(label) {
-	this.label = label;
+var _expandoId= new Date().getTime();
+var lastGenId = 0;
+
+class Vertex {
+    constructor(label, id) {
+        this.label = label;
+		this.id = id || 'uniq' + _expandoId + (lastGenId++);
+    }
+}
+
+class Edge {
+	constructor(fromVertex, toVertex, data) {
+		this.fromVertex = fromVertex;
+		this.toVertex = toVertex;
+		this.data = data;
+	}
 }
 
 class Graph {
-    constructor(v) {
-        this.verticesCount = v;
-        this.edges = 0;
-        this.adjList = [];
-        this.visited = [];
-        for (var i = 0; i < this.verticesCount; i++) {
-            this.adjList[i] = [];
-            this.visited[i] = false;
-        }
+    constructor() {
+		this.vertices = [];
+		this.edges = [];
+		this.adjMatrix = {};
     }
 
-    addEdge(v, w) {
-        this.adjList[v].push(w);
-        this.adjList[w].push(v);
-        this.edges++;
+    addVertex(vertex) {
+		this.vertices.push(vertex);
+		this.adjMatrix[vertex.id] = {};
+        return vertex;
     }
 
-    clearVisited() {
-        for (var i = 0; i < this.verticesCount; i++) {
-            this.visited[i] = false;
-        }
+    findVertex(id) {
     }
 
-    depthSearch(index, fn) {
-        this.clearVisited();
+    removeVertex(vertex) {
+        var index = this.vertices.indexOf(vertex);
+        !~index && this.vertices.splice(index, 1);
+    }
+
+    addEdge(fromVertex, toVertex, data) {
+        var v = fromVertex.id;
+        var w = toVertex.id;
+
+		this.adjMatrix[fromVertex.id][toVertex.id] = 1;
+		this.adjMatrix[toVertex.id][fromVertex.id] = 1;
+
+		var edge = new Edge(fromVertex, toVertex, data);
+        this.edges.push(edge);
+    }
+
+    walk(startVertex, fn) {
         if (fn) {
-            for (let v of this._depthSearch(index)) {
+            for (let v of this._breadthSearch(startVertex)) {
                 fn(v);
             }
         } else {
-            return this._depthSearch(index);
-        }
-    }
-
-    * _depthSearch(v) {
-        // TODO: v out of range
-        yield v;
-        this.visited[v] = true;
-        for (var i = 0; i < this.adjList[v].length; i++) {
-            var w = this.adjList[v][i];
-            if (!this.visited[w]) {
-                yield* this._depthSearch(w);
-            }
-        }
-    }
-
-    breadthSearch(index, fn) {
-        if (fn) {
-            for (let v of this._breadthSearch(index)) {
-                fn(v);
-            }
-        } else {
-            return this._breadthSearch(index);
+            return this._breadthSearch(startVertex);
         }
     }
 
     * _breadthSearch(v) {
-        this.clearVisited();
+        var visited = {};
         var que = [v];
 
         while(que.length > 0) {
             var v = que.shift();
             yield v;
-            this.visited[v] = true;
-            this.adjList[v].forEach((w) => {
-                if (!this.visited[w]) {
-                    que.push(w);
+            visited[v.id] = true;
+            for (var i = 0; i < this.vertices.length; i++) {
+                var vv = this.vertices[i];
+                if (visited[vv.id]) { continue; }
+                var w = this.adjMatrix[v.id][vv.id];
+                if (w === 1) {
+                    que.push(vv);
                 }
-            });
+            }
         }
     }
 
     * [Symbol.iterator]() {
-        yield* this._breadthSearch(0);
-    }
-
-    toString() {
-        return this.adjList.reduce((res, list, i) => {
-            res += i + ' -> ';
-            return list.reduce((res, el) => {
-                if (el !== undefined) {
-                    res += el + ' ';
-                }
-                return res;
-            }, res) + '\n';
-        }, '');
+        yield* this._breadthSearch(this.vertices[0]);
     }
 }
 
 module.exports = Graph;
+module.exports.Vertex = Vertex;

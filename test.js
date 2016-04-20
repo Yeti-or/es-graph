@@ -1,30 +1,56 @@
 'use strict';
 
 const Graph = require('./');
+const Vertex = Graph.Vertex;
 
 
 var graph = new Graph(5);
 
-graph.addEdge(0,1);
-graph.addEdge(0,2);
-graph.addEdge(1,3);
-graph.addEdge(2,4);
+var v0 = graph.addVertex(new Vertex('0'));
+var v1 = graph.addVertex(new Vertex('1'));
+var v2 = graph.addVertex(new Vertex('2'));
+var v3 = graph.addVertex(new Vertex('3'));
+var v4 = graph.addVertex(new Vertex('4'));
+var v5 = graph.addVertex(new Vertex('5'));
+var v6 = graph.addVertex(new Vertex('6'));
+var v7 = graph.addVertex(new Vertex('7'));
+
+graph.addEdge(v0, v1);
+graph.addEdge(v0, v2);
+graph.addEdge(v1, v3);
+graph.addEdge(v2, v4);
+
+graph.addEdge(v6, v7);
+
+// *  0  1  2  3  4  5  6  7
+//                          
+// 0  0  1  1  0  0  0  0  0
+//                          
+// 1  1  0  0  1  0  0  0  0
+//                          
+// 2  1  0  0  0  1  0  0  0
+//                          
+// 3  0  1  0  0  0  0  0  0
+//                          
+// 4  0  0  1  0  0  0  0  0
+//                          
+// 5  0  0  0  0  0  0  0  0
+//                          
+// 6  0  0  0  0  0  0  0  1
+//                          
+// 7  0  0  0  0  0  0  1  0
+
+debugger;
 
 console.log('\n');
-console.log(graph.toString());
+console.log(...[...graph].map(v => 'Visited: ' + v.label));
 
 console.log('\n');
-console.log(...[...graph].map(v => 'Visited: ' + v));
+console.log('walk api1: ');
+graph.walk(v2, (v) => console.log('Visited: ' + v.label));
+console.log('walk api2: ');
+[...graph.walk(v2)].map((v) => console.log('Visited: ' + v.id));
 
-console.log('\n');
-console.log('depthSearch api1: ');
-graph.depthSearch(0, (v) => console.log('Visited: ' + v));
-console.log('depthSearch api2: ');
-[...graph.depthSearch(0)].map((v) => console.log('Visited: ' + v));
-
-console.log('\n');
-console.log('breadthSearch api1: ');
-graph.breadthSearch(2, (v) => console.log('Visited: ' + v));
-console.log('breadthSearch api2: ');
-[...graph.breadthSearch(2)].map((v) => console.log('Visited: ' + v));
+console.log('walk api1: ');
+graph.walk(v7, (v) => console.log('Visited: ' + v.label));
 
