@@ -80,7 +80,7 @@ class Graph {
     }
 
     * [Symbol.iterator]() {
-        yield* this._breadthSearch(this.vertices[0]);
+        yield* this.vertices;
     }
 }
 

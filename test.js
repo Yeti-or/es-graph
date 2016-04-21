@@ -8,7 +8,7 @@ var graph = new Graph(5);
 
 var v0 = graph.addVertex(new Vertex('0'));
 var v1 = graph.addVertex(new Vertex('1'));
-var v2 = graph.addVertex(new Vertex('2'));
+var v2 = graph.addVertex(new Vertex('2', 22));
 var v3 = graph.addVertex(new Vertex('3'));
 var v4 = graph.addVertex(new Vertex('4'));
 var v5 = graph.addVertex(new Vertex('5'));
@@ -43,13 +43,13 @@ graph.addEdge(v6, v7);
 debugger;
 
 console.log('\n');
-console.log(...[...graph].map(v => 'Visited: ' + v.label));
+console.log(...[...graph].map(v => 'Vertex: ' + v.label));
 
 console.log('\n');
 console.log('walk api1: ');
 graph.walk(v2, (v) => console.log('Visited: ' + v.label));
 console.log('walk api2: ');
-[...graph.walk(v2)].map((v) => console.log('Visited: ' + v.id));
+[...graph.walk(v2)].map((v) => console.log('Visited: ' + v.label));
 
 console.log('walk api1: ');
 graph.walk(v7, (v) => console.log('Visited: ' + v.label));
